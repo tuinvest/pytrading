@@ -31,7 +31,7 @@ macd, signal = macd(data)
 
 ### Analysis
 
-The following functions for technical analysis are available:
+The following functions for technical analysis are available.
 
 #### Package `trading.analysis.average`
 
@@ -39,17 +39,17 @@ The following functions for technical analysis are available:
 ma = ma(stockdata, interval=10)
 ```
 Calculates the moving average for a specific StockData object with a moving window of `interval` days. 
-Returns `ma` 1d array, the moving average
+Returns `ma` 1d array, the moving average.
 
 ```python
 ema = ema(stockdata, interval=8)
 ```
 Calculates the exponential moving average for a specific StockData object with a exponential window of `interval` days.
-Returns `ema` 1d array, the exponential moving average
+Returns `ema` 1d array, the exponential moving average.
 
 ```python
 macd, signal = macd(stockdata, fast=12, slow=26, signal_t=9)
-``
-Calculates the MACD line for a specific StockData object with `fast` and `slow` being the two moving averages to compare. The signal time interval of the MACD indicator can be set with `signal_t`
-Returns `macd` 1d array, the macd indicator
-Returns `signal` 1d array, the signal line
+``` 
+Calculates the MACD line for a specific StockData object with `fast` and `slow` being the two moving averages to compare. The signal time interval of the MACD indicator can be set with `signal_t`.
+Returns `macd` 1d array, the macd indicator.
+Returns `signal` 1d array, the signal line.
