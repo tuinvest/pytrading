@@ -14,17 +14,18 @@ class StockData(object):
         self.extra[key] = values
 
     def __getitem__(self, item):
+        if item in ['open', 'high', 'low', 'close', 'volume', 'x']:
+            if item == 'open':
+                return self.data[:,0]
+            elif item == 'high':
+                return self.data[:,1]
+            elif item == 'low':
+                return self.data[:,2]
+            elif item == 'close':
+                return self.data[:,3]
+            elif item == 'volume':
+                return self.data[:,4]
         return self.extra[item]
 
     def __iter__(self):
         pass
-
-if __name__ == '__main__':
-    from trading.gateway import YahooGateway
-
-    gateway = YahooGateway()
-
-    data = StockData()
-    data.set_gateway(gateway)
-
-    data.load("ADS.DE")

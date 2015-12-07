@@ -1,8 +1,8 @@
 import numpy as np
 
-CLOSE_ROW_ID = 4
+CLOSE_ROW_ID = 3
 
-def moving_average(stockdata, interval=10):
+def ma(stockdata, interval=10):
     average = np.zeros((stockdata.data.shape[0], ))
 
     for i in range(stockdata.data.shape[0]):
@@ -11,16 +11,14 @@ def moving_average(stockdata, interval=10):
         else:
             average[i] = np.average(stockdata.data[i-interval:i+1, CLOSE_ROW_ID])
 
-        stockdata.set_extra('moving_average_'+str(interval), average)
+        stockdata.set_extra('MA_'+str(interval), average)
 
-if __name__ == '__main__':
-    from trading.gateway import YahooGateway
-    from trading.model.data import StockData
+def ema(stockdata, interval=8):
+    average = np.zeros((stockdata.data.shape[0], ))
 
-    gateway = YahooGateway()
+    average[0:interval] = np.average(stockdata.data[0:interval, CLOSE_ROW_ID])
 
-    data = StockData()
-    data.set_gateway(gateway)
-    moving_average(data)
+    for i in range(interval, stockdata.data.shape[0]):
+        average[i] = average[i-1] * (1-2/float(interval)) + stockdata.data[i, CLOSE_ROW_ID] * 2/float(interval)
 
-    print data.data
+    stockdata.set_extra('EMA_'+str(interval), average)
