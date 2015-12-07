@@ -75,3 +75,12 @@ rsi = rsi(stockdata, interval=14)
 ```
 Calculates the *relative strength* indicator for a given StockData object, `interval` being the look-back period.
 Returns `rsi` 1d array, the RSI indicator.
+
+#### Package `trading.analysis.distribution`
+```python
+lower, middle, upper = bb(stockdata, interval=20, stdev_multiplier=2)
+```
+Calculates the *Bollinger bands* for a given StockData object, `interval` being the look-back period and `stdev_multiplier` being the multiplication factor of the standard deviation as the distance between the middle and the upper and lower bollinger band.
+Returns `lower` 1d array, the lower Bollinger band.
+Returns `middle` 1d array, the middle (moving average) band.
+Returns `upper` 1d array, the upper Bollinger band.
