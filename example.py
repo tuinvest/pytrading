@@ -1,14 +1,18 @@
 from trading.gateway.yahoo import YahooGateway
 from trading.model.data import StockData
-from trading.analysis.average import ma, ema
+from trading.analysis.average import ma, ema, macd
 
+import matplotlib.pyplot as plt
 
 gateway = YahooGateway()
 
 data = StockData()
 data.set_gateway(gateway)
-data.load("ADS.DE")
+data.load("VOW3.DE")
 
-ma(data, 10)
-ma(data, 200)
-ema(data, 8)
+macd, signal = macd(data)
+
+plt.plot(data.data[:,5])
+plt.plot(macd)
+plt.plot(signal)
+plt.show()
