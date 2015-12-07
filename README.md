@@ -1,6 +1,6 @@
 # algotrading
 
-Python-library for algorithmic trading in python based on technical indicators with backtesting ability. Data is pulled from the Yahoo Finance API.
+Python-library for algorithmic trading based on technical indicators with backtesting ability. Data is pulled from the Yahoo Finance API.
 
 ## Usage
 
