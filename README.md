@@ -69,3 +69,9 @@ K, D = sstoc(stockdata, interval=14, k_smooth=3, d_smooth=3)
 Calculates the *slow stochastic oscillator* indicators K and D for a given StockData object, `interval` being the look-back period, `k_smooth` being the smoothing period for indicator K and `d_smooth` being the smoothing period for indicator D.
 Returns `K` 1d array, the %K indicator.
 Returns `D` 1d array, the %D indicator.
+
+```python
+rsi = rsi(stockdata, interval=14)
+```
+Calculates the *relative strength* indicator for a given StockData object, `interval` being the look-back period.
+Returns `rsi` 1d array, the RSI indicator.

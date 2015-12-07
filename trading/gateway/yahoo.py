@@ -9,6 +9,7 @@ class YahooGateway:
         data = r.text.split("\n")[1:]
         chart = []
         days = []
+
         for line in reversed(data): # order by date ASC
             line = line.split(",")
             if(len(line) >= 2):
