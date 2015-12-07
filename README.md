@@ -53,3 +53,19 @@ macd, signal = macd(stockdata, fast=12, slow=26, signal_t=9)
 Calculates the MACD line for a specific StockData object with `fast` and `slow` being the two moving averages to compare. The signal time interval of the MACD indicator can be set with `signal_t`.
 Returns `macd` 1d array, the macd indicator.
 Returns `signal` 1d array, the signal line.
+
+#### Package `trading.analysis.oscillator`
+
+```python
+K, D = fstoc(stockdata, interval=14, d_smooth=3)
+```
+Calculates the fast stochastic oscillator indicators K and D for a given StockData object, `interval` being the look-back period and `d_smooth` being the smoothing period for indicator D.
+Returns `K` 1d array, the %K indicator.
+Returns `D` 1d array, the %D indicator.
+
+```python
+K, D = sstoc(stockdata, interval=14, k_smooth=3, d_smooth=3)
+```
+Calculates the slow stochastic oscillator indicators K and D for a given StockData object, `interval` being the look-back period, `k_smooth` being the smoothing period for indicator K and `d_smooth` being the smoothing period for indicator D.
+Returns `K` 1d array, the %K indicator.
+Returns `D` 1d array, the %D indicator.

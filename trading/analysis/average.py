@@ -7,13 +7,17 @@ CLOSE_ROW_ID = 5
 # --
 
 def ma(stockdata, interval=10):
-    average = np.zeros((stockdata.data.shape[0], ))
-    for i in range(stockdata.data.shape[0]):
-        if i < interval:
-            average[i] = np.average(stockdata.data[0:i+1, CLOSE_ROW_ID])
-        else:
-            average[i] = np.average(stockdata.data[i-interval:i+1, CLOSE_ROW_ID])
+    average = ma_raw(stockdata.data[:, CLOSE_ROW_ID], interval)
     stockdata.set_extra('MA_'+str(interval), average)
+    return average
+
+def ma_raw(data, interval):
+    average = np.zeros((data.shape[0], ))
+    for i in range(data.shape[0]):
+        if i < interval:
+            average[i] = np.average(data[0:i+1])
+        else:
+            average[i] = np.average(data[i-interval:i+1])
     return average
 
 # ---
