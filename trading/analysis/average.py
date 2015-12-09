@@ -6,10 +6,12 @@ CLOSE_ROW_ID = 5
 # MA
 # --
 
+
 def ma(stockdata, interval=10):
     average = ma_raw(stockdata.data[:, CLOSE_ROW_ID], interval)
     stockdata.set_extra('MA_'+str(interval), average)
     return average
+
 
 def ma_raw(data, interval):
     average = np.zeros((data.shape[0], ))
@@ -24,10 +26,12 @@ def ma_raw(data, interval):
 # EMA
 # ---
 
+
 def ema(stockdata, interval=8):
     average = ema_raw(stockdata.data[:,CLOSE_ROW_ID], interval)
     stockdata.set_extra('EMA_'+str(interval), average)
     return average
+
 
 def ema_raw(data, interval):
     average = np.zeros((data.shape[0], ))
@@ -40,11 +44,13 @@ def ema_raw(data, interval):
 # MACD
 # ----
 
+
 def macd(stockdata, fast=12, slow=26, signal_t=9):
     macd, signal = macd_raw(stockdata.data[:, CLOSE_ROW_ID], fast, slow, signal_t)
     stockdata.set_extra('MACD_'+str(fast)+'_'+str(slow)+'_'+str(signal), macd)
     stockdata.set_extra('MACD_SIGNAL_'+str(fast)+'_'+str(slow)+'_'+str(signal), signal)
     return macd, signal
+
 
 def macd_raw(data, fast, slow, signal_t):
     macd = ema_raw(data, fast) - ema_raw(data, slow)

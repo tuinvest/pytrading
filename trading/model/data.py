@@ -16,15 +16,15 @@ class StockData(object):
     def __getitem__(self, item):
         if item in ['open', 'high', 'low', 'close', 'volume', 'x']:
             if item == 'open':
-                return self.data[:,0]
+                return self.data[:, 0]
             elif item == 'high':
-                return self.data[:,1]
+                return self.data[:, 1]
             elif item == 'low':
-                return self.data[:,2]
+                return self.data[:, 2]
             elif item == 'close':
-                return self.data[:,3]
+                return self.data[:, 3]
             elif item == 'volume':
-                return self.data[:,4]
+                return self.data[:, 4]
         return self.extra[item]
 
     def __iter__(self):
