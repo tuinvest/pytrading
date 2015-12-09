@@ -4,7 +4,7 @@ from datetime import datetime
 
 class YahooGateway:
     def load(self, symbol):
-        r = requests.get('http://ichart.finance.yahoo.com/table.csv?s='+symbol+'&a=01&b=01&c=2000&d='+str(datetime.now().day)+'&e='+str(datetime.now().month)+'&f='+str(datetime.now().year)+'&g=d&ignore=.csv')
+        r = requests.get('http://ichart.finance.yahoo.com/table.csv?s='+symbol+'&a=0&b=01&c=2000&g=d&ignore=.csv')
 
         data = r.text.split("\n")[1:]
         chart = []
