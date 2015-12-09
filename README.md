@@ -1,5 +1,9 @@
 # pytrading
 
+[![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square)](http://goldsborough.mit-license.org)
+
+[![Code Climate](https://codeclimate.com/github/tuinvest/pytrading/badges/gpa.svg)](https://codeclimate.com/github/tuinvest/pytrading)
+
 Python-library for algorithmic trading based on technical indicators with backtesting ability. Data is pulled from the Yahoo Finance API.
 
 ## Usage
@@ -38,7 +42,7 @@ The following functions for technical analysis are available.
 ```python
 ma = ma(stockdata, interval=10)
 ```
-Calculates the *moving average* for a specific StockData object with a moving window of `interval` days. 
+Calculates the *moving average* for a specific StockData object with a moving window of `interval` days.
 Returns `ma` 1d array, the moving average.
 
 ```python
@@ -49,7 +53,7 @@ Returns `ema` 1d array, the exponential moving average.
 
 ```python
 macd, signal = macd(stockdata, fast=12, slow=26, signal_t=9)
-``` 
+```
 Calculates the *MACD* line for a specific StockData object with `fast` and `slow` being the two moving averages to compare. The signal time interval of the MACD indicator can be set with `signal_t`.
 Returns `macd` 1d array, the macd indicator.
 Returns `signal` 1d array, the signal line.
