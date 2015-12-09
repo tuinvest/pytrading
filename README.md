@@ -1,7 +1,6 @@
 # pytrading
 
 [![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square)](http://goldsborough.mit-license.org)
-
 [![Code Climate](https://codeclimate.com/github/tuinvest/pytrading/badges/gpa.svg)](https://codeclimate.com/github/tuinvest/pytrading)
 
 Python-library for algorithmic trading based on technical indicators with backtesting ability. Data is pulled from the Yahoo Finance API.
