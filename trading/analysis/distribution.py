@@ -7,6 +7,7 @@ CLOSE_ROW_ID = 5
 # Bollinger Bands
 # ---------------
 
+
 def bb(stockdata, interval=20, stdev_multiplier=2):
     lower, middle, upper = bb_raw(
         stockdata.data[:,CLOSE_ROW_ID],
@@ -19,6 +20,7 @@ def bb(stockdata, interval=20, stdev_multiplier=2):
     stockdata.set_extra(bn + 'UPPER', middle)
 
     return lower, middle, upper
+
 
 def bb_raw(data, interval=20, stdev_multiplier=2):
     stdev = np.zeros(data.shape)

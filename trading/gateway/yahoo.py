@@ -1,6 +1,6 @@
 import requests
 import numpy as np
-from datetime import datetime
+
 
 class YahooGateway:
     def load(self, symbol):
