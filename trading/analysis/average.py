@@ -8,7 +8,7 @@ CLOSE_ROW_ID = 5
 
 
 def ma(stockdata, interval=10):
-    average = ma_raw(stockdata.data[:, CLOSE_ROW_ID], interval)
+    average = ma_raw(stockdata.data['Close'], interval)
     stockdata.set_extra('MA_'+str(interval), average)
     return average
 
@@ -28,7 +28,7 @@ def ma_raw(data, interval):
 
 
 def ema(stockdata, interval=8):
-    average = ema_raw(stockdata.data[:,CLOSE_ROW_ID], interval)
+    average = ema_raw(stockdata.data['Close'], interval)
     stockdata.set_extra('EMA_'+str(interval), average)
     return average
 

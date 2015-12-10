@@ -8,7 +8,7 @@ class StockData(object):
 
     def load(self, symbol):
         self.symbol = symbol
-        self.days, self.data = self.gateway.load(symbol)
+        self.data = self.gateway.load(symbol)
 
     def set_extra(self, key, values):
         self.extra[key] = values

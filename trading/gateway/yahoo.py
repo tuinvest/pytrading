@@ -6,22 +6,12 @@ STD_PROVIDER = 'yahoo'
 
 ''' Abstract Gateway used as an interface '''
 class AbstractGateway():
-    def load_from_std_provider(self, symbol):
-        raise NotImplementedError('Function not implemented!')
-
     def load(self, symbol, provider):
         raise NotImplementedError('Function not implemented!')
 
 ''' General Gateway that is not dependend on it's provider '''
-class GeneralGateway(AbstractGateway):
-    def load_from_std_provider(self, symbol):
-        try:
-            data = web.DataReader(symbol, STD_PROVIDER)
-        except:
-            raise ValueError('Symbol not found!')
-        return data
-
-    def load(self, symbol, provider):
+class YahooGateway(AbstractGateway):
+    def load(self, symbol, provider=STD_PROVIDER):
         try:
             data = web.DataReader(symbol, provider)
         except:
@@ -32,7 +22,7 @@ class GeneralGateway(AbstractGateway):
 
 
 ''' Deprecated (delete after legacy-support is not needed) '''
-class YahooGateway:
+class YahooGatewayLegacy:
     def load(self, symbol):
         r = requests.get('http://ichart.finance.yahoo.com/table.csv?s='+symbol+'&a=0&b=01&c=2000&g=d&ignore=.csv')
 

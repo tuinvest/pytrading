@@ -1,6 +1,6 @@
-from trading.gateway.yahoo import YahooGateway
+from trading.gateway.yahoo import *
 from trading.model.data import StockData
-from trading.analysis.distribution import bb
+from trading.analysis.average import *
 from trading.analysis.volatility import atr
 import numpy as np
 
@@ -13,14 +13,16 @@ data.set_gateway(gateway)
 data.load("ADS.DE")
 
 # lower, middle, upper = bb(data)
-averagetruerange = atr(data)
+ema_data = ema(data)
+ma_data = ma(data)
 
-print averagetruerange
+#print(averagetruerange)
 
 # plt.plot(data.data[:,5])
 # plt.plot(lower)
 # plt.plot(middle, '-')
 # plt.plot(upper)
 
-plt.plot(averagetruerange)
+plt.plot(ema_data)
+plt.plot(ma_data)
 plt.show()
