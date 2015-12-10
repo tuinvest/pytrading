@@ -15,6 +15,7 @@ data.load("ADS.DE")
 # lower, middle, upper = bb(data)
 ema_data = ema(data)
 ma_data = ma(data)
+macd_data = macd(data)
 
 #print(averagetruerange)
 
@@ -23,6 +24,8 @@ ma_data = ma(data)
 # plt.plot(middle, '-')
 # plt.plot(upper)
 
+plt.plot(data.data['Close'])
 plt.plot(ema_data)
 plt.plot(ma_data)
+plt.plot(macd_data)
 plt.show()

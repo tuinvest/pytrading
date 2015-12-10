@@ -46,7 +46,7 @@ def ema_raw(data, interval):
 
 
 def macd(stockdata, fast=12, slow=26, signal_t=9):
-    macd, signal = macd_raw(stockdata.data[:, CLOSE_ROW_ID], fast, slow, signal_t)
+    macd, signal = macd_raw(stockdata.data['Close'], fast, slow, signal_t)
     stockdata.set_extra('MACD_'+str(fast)+'_'+str(slow)+'_'+str(signal), macd)
     stockdata.set_extra('MACD_SIGNAL_'+str(fast)+'_'+str(slow)+'_'+str(signal), signal)
     return macd, signal
