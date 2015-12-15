@@ -1,10 +1,12 @@
 import numpy as np
+import pandas as pd
 
 
 def atr(stockdata, interval=14):
-    atr = atr_raw(np.array([stockdata.data[:, 1], stockdata.data[:, 2], stockdata.data[:, 3]]), interval)
-    stockdata.set_extra('ATR_'+str(interval), atr)
-    return atr
+    atr_data = atr_raw(np.array([stockdata.data['High'], stockdata.data['Low'], stockdata.data['Close']]), interval)
+    atr_data = pd.DataFrame(atr_data, index=stockdata.data.index, columns=['ATR'])
+    stockdata.set_extra('ATR_'+str(interval), atr_data)
+    return atr_data
 
 
 def atr_raw(data, interval=14):
@@ -21,7 +23,6 @@ def atr_raw(data, interval=14):
         tr = max(tr0, tr1, tr2)
 
         if i < interval:
-            print tr
             atr[i] = (atr[i - 1] * (i - 1) + tr) / i
         else:
             atr[i] = (atr[i - 1] * (interval - 1) + tr) / interval

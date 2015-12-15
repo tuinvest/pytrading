@@ -1,4 +1,4 @@
-class StockData(object):
+class SecurityData(object):
 
     def __init__(self):
         self.extra = {}
