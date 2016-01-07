@@ -1,14 +1,13 @@
 from trading.gateway.dataprovider import *
-from trading.model.data import SecurityData
-from trading.analysis.average import *
-from trading.analysis.volatility import atr
-from trading.analysis.distribution import *
-from trading.controller.example import *
-from trading.controller.base import *
-import numpy as np
-import pandas as pd
+#from trading.model.data import SecurityData
+#from trading.analysis.volatility import atr
+#from trading.analysis.distribution import *
+#from trading.controller.example import *
+#from trading.controller.base import *
+#import numpy as np
+#import pandas as pd
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 
 # gateway = YahooGateway()
@@ -30,10 +29,15 @@ import matplotlib.pyplot as plt
 # plt.show()
 
 
-environment = BacktestingEnvironment()
-context = StrategyContext(["SPY"], Portfolio())
-strategy = ExampleStrategy(environment, context)
-environment.set_strategy(strategy)
+#environment = BacktestingEnvironment()
+#context = StrategyContext(["SPY"], Portfolio())
+#strategy = ExampleStrategy(environment, context)
+#environment.set_strategy(strategy)
 
-environment.do_test()
+#environment.do_test()
 
+y = YahooGateway()
+print(y.load("GOOG").head())
+
+d = Database()
+print(d.load("GOOG"))
