@@ -8,8 +8,9 @@ CLOSE_ROW_ID = 5
 
 
 def ma(stockdata, interval=10):
-    average = ma_raw(stockdata.data['Close'], interval)
-    stockdata.set_extra('MA_'+str(interval), average)
+    average = ma_raw(stockdata['Close'], interval)
+    stockdata['MA'] = average
+    stockdata['MA_{}'.format(interval)] = average
     return average
 
 
@@ -28,8 +29,9 @@ def ma_raw(data, interval):
 
 
 def ema(stockdata, interval=8):
-    average = ema_raw(stockdata.data['Close'], interval)
-    stockdata.set_extra('EMA_'+str(interval), average)
+    average = ema_raw(stockdata['Close'], interval)
+    stockdata['EMA'.format(interval)] = average
+    stockdata['EMA_{}'.format(interval)] = average
     return average
 
 
@@ -44,11 +46,12 @@ def ema_raw(data, interval):
 # MACD
 # ----
 
-
 def macd(stockdata, fast=12, slow=26, signal_t=9):
-    macd, signal = macd_raw(stockdata.data['Close'], fast, slow, signal_t)
-    stockdata.set_extra('MACD_'+str(fast)+'_'+str(slow)+'_'+str(signal), macd)
-    stockdata.set_extra('MACD_SIGNAL_'+str(fast)+'_'+str(slow)+'_'+str(signal), signal)
+    macd, signal = macd_raw(stockdata['Close'], fast, slow, signal_t)
+    stockdata['MACD'] = macd
+    stockdata['MACD_Signal'] = signal
+    stockdata['MACD_{}_{}_{}'.format(fast, slow, signal_t)] = macd
+    stockdata['MACD_Signal_{}_{}_{}'.format(fast, slow, signal_t)] = signal
     return macd, signal
 
 

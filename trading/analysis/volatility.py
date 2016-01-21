@@ -3,9 +3,9 @@ import pandas as pd
 
 
 def atr(stockdata, interval=14):
-    atr_data = atr_raw(np.array([stockdata.data['High'], stockdata.data['Low'], stockdata.data['Close']]), interval)
-    atr_data = pd.DataFrame(atr_data, index=stockdata.data.index, columns=['ATR'])
-    stockdata.set_extra('ATR_'+str(interval), atr_data)
+    atr_data = atr_raw(np.array([stockdata['High'], stockdata['Low'], stockdata['Close']]), interval)
+    stockdata['ATR'] = atr_data
+    stockdata['ATR_{}'.format(interval)] = atr_data
     return atr_data
 
 

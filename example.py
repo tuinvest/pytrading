@@ -1,33 +1,14 @@
 from trading.gateway.dataprovider import *
-#from trading.model.data import SecurityData
-#from trading.analysis.volatility import atr
-#from trading.analysis.distribution import *
-#from trading.controller.example import *
-#from trading.controller.base import *
-#import numpy as np
-#import pandas as pd
-
-#import matplotlib.pyplot as plt
-
+from trading.analysis.distribution import *
+from trading.analysis.volatility import *
+from trading.analysis.average import *
+import matplotlib.pyplot as plt
 
 # gateway = YahooGateway()
 
 # data = SecurityData()
 # data.set_gateway(gateway)
 # data.load("ADS.DE")
-
-# lower, middle, upper = bb(data)
-# ema_data = ema(data)
-# ma_data = ma(data)
-# macd_data = macd(data)
-# atr_data = atr(data)
-
-# plt.plot(ema_data)
-# plt.plot(ma_data)
-# plt.plot(macd_data)
-# plt.plot(atr_data)
-# plt.show()
-
 
 #environment = BacktestingEnvironment()
 #context = StrategyContext(["SPY"], Portfolio())
@@ -37,7 +18,22 @@ from trading.gateway.dataprovider import *
 #environment.do_test()
 
 y = YahooGateway()
-print(y.load("GOOG").head())
+data = y.load("GOOG")
 
-d = Database()
-print(d.load("GOOG"))
+bb(data)
+ema(data)
+ma(data)
+macd(data)
+atr(data)
+
+print(data)
+plt.plot(data['Close'])
+plt.plot(data['MA'])
+plt.plot(data['EMA'])
+plt.plot(data['MACD'])
+plt.plot(data['MACD_Signal'])
+plt.plot(data['BB_Lower'])
+plt.plot(data['BB_Middle'])
+plt.plot(data['BB_Upper'])
+plt.plot(data['ATR'])
+plt.show()

@@ -1,5 +1,5 @@
 import numpy as np
-from average import ma_raw
+from trading.analysis.average import ma_raw
 
 CLOSE_ROW_ID = 5
 
@@ -10,17 +10,17 @@ CLOSE_ROW_ID = 5
 
 def bb(stockdata, interval=20, stdev_multiplier=2):
     lower, middle, upper = bb_raw(
-        stockdata.data[:,CLOSE_ROW_ID],
+        stockdata['Close'],
         interval,
         stdev_multiplier
     )
-    bn = 'BN_{0}_{1}_'.format(interval, stdev_multiplier)
-    stockdata.set_extra(bn + 'LOWER', lower)
-    stockdata.set_extra(bn + 'MIDDLE', middle)
-    stockdata.set_extra(bn + 'UPPER', middle)
-
+    stockdata['BB_Lower'] = lower
+    stockdata['BB_Middle'] = middle
+    stockdata['BB_Upper'] = upper
+    stockdata['BB_Lower_{}_{}'.format(interval, stdev_multiplier)] = lower
+    stockdata['BB_Middle_{}_{}'.format(interval, stdev_multiplier)] = middle
+    stockdata['BB_Upper_{}_{}'.format(interval, stdev_multiplier)] = upper
     return lower, middle, upper
-
 
 def bb_raw(data, interval=20, stdev_multiplier=2):
     stdev = np.zeros(data.shape)
@@ -32,5 +32,4 @@ def bb_raw(data, interval=20, stdev_multiplier=2):
     middle = ma_raw(data, interval)
     upper = middle + stdev_multiplier * stdev
     lower = middle - stdev_multiplier * stdev
-
     return lower, middle, upper
