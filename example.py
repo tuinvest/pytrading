@@ -1,39 +1,36 @@
-from trading.gateway.dataprovider import *
-from trading.analysis.distribution import *
-from trading.analysis.volatility import *
-from trading.analysis.average import *
-import matplotlib.pyplot as plt
+# -*- coding: utf-8 -*-
+from pytrading.entities import AbstractStrategy, StrategyContext, Portfolio,\
+                               BacktestingEnvironment
+from pytrading.indicators import series_indicator
 
-# gateway = YahooGateway()
 
-# data = SecurityData()
-# data.set_gateway(gateway)
-# data.load("ADS.DE")
+class MomentumStrategy(AbstractStrategy):
+    def before(self):
+        pass
 
-#environment = BacktestingEnvironment()
-#context = StrategyContext(["SPY"], Portfolio())
-#strategy = ExampleStrategy(environment, context)
-#environment.set_strategy(strategy)
+    def handle_data(self, data, indicators=None):
+        sec_weight = 1/len(self.context.universe)
 
-#environment.do_test()
+        for sec in self.context.universe:
+            if indicators[sec]['MOMENTUM'][-1] > 0.0:
+                # Buy at next price, if security closed with an uptick
+                self.environment.order_target_percent(sec, sec_weight)
+            else:
+                # Sell at next price, if security closed with a downtick
+                self.environment.order_target_percent(sec, 0.0)
 
-y = YahooGateway()
-data = y.load("GOOG")
 
-bb(data)
-ema(data)
-ma(data)
-macd(data)
-atr(data)
+def momentum(series):
+    return series - series.shift()  # Change to previous day
 
-print(data)
-plt.plot(data['Close'])
-plt.plot(data['MA'])
-plt.plot(data['EMA'])
-plt.plot(data['MACD'])
-plt.plot(data['MACD_Signal'])
-plt.plot(data['BB_Lower'])
-plt.plot(data['BB_Middle'])
-plt.plot(data['BB_Upper'])
-plt.plot(data['ATR'])
-plt.show()
+indicators = {
+    'MOMENTUM': series_indicator(momentum, 'Adj Close')
+}
+
+# (Current close - Previous close) cannot be calculated for day zero,
+# so we skip the first trading day.
+context = StrategyContext(['PEP'], skip_days=1, indicators=indicators)
+
+strategy = MomentumStrategy(context)
+environment = BacktestingEnvironment(strategy)
+environment.backtest()
