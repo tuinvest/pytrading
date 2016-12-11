@@ -53,26 +53,21 @@ class Position(object):
             self.quantity, self.vwap)
 
 
-class StrategyContext(object):
-    def __init__(self, universe,
-                 skip_days=0, indicators={}):
-        self.universe = universe
-        self.skip_days = skip_days
-        self.indicators = indicators
-
-        self.portfolio = Portfolio()
-
-
 class AbstractStrategy(ABC):
-    def __init__(self, context, environment=None):
-        self.context = context
-        self.environment = environment
+    def __init__(self, environment=None):
+        self.universe = []
+        self.skip_days = 0
+        self.indicators = {}
+        self.portfolio = Portfolio()
+        self.environment = (environment or BacktestingEnvironment)
 
-    def set_environment(self, environment):
-        self.environment = environment
+    def run(self):
+        self.environment = self.environment(self)
+        self.initialize()
+        self.environment.backtest()
 
     @abstractmethod
-    def before(self):
+    def initialize(self):
         raise NotImplementedError('Function not implemented!')
 
     @abstractmethod
@@ -83,18 +78,16 @@ class AbstractStrategy(ABC):
 class BacktestingEnvironment(object):
     def __init__(self, strategy):
         self.strategy = strategy
-        self.context = strategy.context
-        self.portfolio = strategy.context.portfolio
-        self.strategy.set_environment(self)
+        self.portfolio = strategy.portfolio
 
         self.data = {}
         self.indicator_data = {}
-        self.current_day = 0 + strategy.context.skip_days
+        self.current_day = 0 + strategy.skip_days
 
     def _load_data(self):
-        for security in self.context.universe:
+        for security in self.strategy.universe:
             self.data[security] = dataprovider.load(security)
-            for i_label, i_callable in self.context.indicators.items():
+            for i_label, i_callable in self.strategy.indicators.items():
                 # indicator_data example: {'AAPL': {'ATR': ..., 'SMA_14': ...}}
                 i_data = i_callable(self.data[security])
                 self.indicator_data.setdefault(security, {})[i_label] = i_data
@@ -115,16 +108,19 @@ class BacktestingEnvironment(object):
         bt_data = {}
         bt_indicators = {
             security: {}
-            for security in self.context.universe
+            for security in self.strategy.universe
         }
 
-        # Simulate progression of the stock market by feeding the strat data
-        rows = max(len(s) for s in self.data.values())  # Max. days
+        # Number of rows/days in the df with the most rows/days
+        rows = max(len(s) for s in self.data.values())
         for i in range(self.current_day, rows - 1):
-            # rows - 1 is the last day trading is possible
+            # rows - 1 is the last day on which trading is possible
             self.current_day = i
-            for security in self.context.universe:
+            for security in self.strategy.universe:
                 if len(self.data[security]) > i:  # New data available?
+                    # Idea. Wrap df and modify appropriate magic methods to
+                    # shift input indices by the number of days that already
+                    # have passed 
                     bt_data[security] = self.data[security][:i + 1]
 
                 # Update indicators
@@ -144,6 +140,7 @@ class BacktestingEnvironment(object):
         self.portfolio.update(security, quantity, price)
 
     def order_target_percent(self, security, percent):
+        print('Ordering {} to {}%.'.format(security, percent*100))
         if percent < 0.0 or percent > 1.0:
             raise ValueError('Percent must be between 0.0 and 1.0!')
         price = self._next_price(security)

@@ -11,14 +11,12 @@ def indicator_partial(indicator, **kwargs):
     return partial(indicator, **kwargs)
 
 
-def series_indicator(indicator, df_column, **kwargs):
-    return partial(_series_indicator, indicator=indicator,
-                   df_column=df_column, **kwargs)
-
-
-def _series_indicator(df, indicator, df_column, **kwargs):
-    series = df[df_column]
-    return indicator(series, **kwargs)
+def with_series(df_column):
+    def series_indicator_decorator(indicator):
+        def func_wrapper(df, **kwargs):
+            return indicator(df[df_column], **kwargs)
+        return func_wrapper
+    return series_indicator_decorator
 
 
 # Average Indicators
