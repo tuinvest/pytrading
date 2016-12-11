@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from pytrading.entities import (
-    AbstractStrategy, Portfolio, BacktestingEnvironment
-)
+from pytrading.entities import AbstractStrategy
 from pytrading.indicators import with_series
 
 

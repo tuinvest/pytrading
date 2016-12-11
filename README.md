@@ -15,66 +15,73 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-
 ## Basics
 
-There are two components needed to run a trading strategy. The strategy itself and the environment in which it is executed (e.g. backtesting environment). 
-
-PyTrading provides a `BacktestingEnvironment` which is initizalized with a strategy as an argument. A strategy can be created by subclassing `AbstractStrategy`. Strategies are initizalized with a context that stores information such as the securities universe and the current portfolio. 
-
-To start off, subclass `AbstractStrategy`, create a context and use it to initizalize the strategy. The `BacktestingEnvironment` can be used to backtest this strategy.
+To create a PyTrading strategy you only have to subclass the `AbstractStrategy` class from the `pytrading.entities` module. You are required to implement two methods: `initialize` and `handle_data`. The `initialize` method requires you to set a few configuration variables that specify how the strategy is executed. Below we create a strategy whose asset universe include *Pepsi* (**PEP**) and *Coca-Cola* (**KO**).
 
 ```python
-from pytrading.entities import AbstractStrategy, StrategyContext, BacktestingEnvironment
+from pytrading.entities import AbstractStrategy
 
 class ExampleStrategy(AbstractStrategy):
-    def before(self):
-        pass
+    def initialize(self):
+        self.universe = ['PEP', 'KO']
 
     def handle_data(self, data, indicators=None):
 		pass
 
-context = StrategyContext(['PEP', 'KO'])
-strategy = ExampleStrategy(context)
-environment = BacktestingEnvironment(strategy)
-environment.backtest()
+strategy = ExampleStrategy()
+strategy.run()
 ```
 
 The `handle_data` will be called for every trading day with a `data` dictionary that uses the security tickers as keys and `pandas.DataFrame` objects as values. These `pandas.DataFrame` objects contain `Low`, `High`, `Open`, `Close` and `Adj Close` as columns. PyTrading relies heavily on the data structures provided by `pandas`.
 
 ## Indicators
 
-Since no behavior is defined for the `handle_data` method the above strategy will do nothing. Indicators can be used to generate trading signals. They can be utilized by passing a dictionary of the form `{'INDICATOR_NAME': indicator_method}` to the context constructor. `INDICATOR_NAME` is the name by which the indicator data can be accessed later on. `indicator_method` is a method which takes a security's `DataFrame` object as an input and returns the calculated indicator. The indicator data is provided to a strategy's `handle_data` method.
+Since no behavior is defined for the `handle_data` method the above strategy will do nothing. Indicators can be used to generate trading signals. They can be utilized by passing a dictionary of the form `{'INDICATOR_NAME': indicator_method}` to the context constructor. `INDICATOR_NAME` is the name by which the indicator data can be accessed later on. `indicator_method` is a method which takes a security's `DataFrame` object as an input and returns the calculated indicator. The indicator data is provided to a strategy's `handle_data` method as well.
 
 ```python
-from pytrading.indicators import series_indicator
+from pytrading.entities import AbstractStrategy
+from pytrading.indicators import with_series
 
-def momentum(self, series):
-	return series - series.shift() # Close price - Previous close price
 
-indicators = {
-    'MOMENTUM': series_indicator(momentum, 'Adj Close')
-}
+@with_series('Adj Close')
+def momentum(series):
+    return series - series.shift()  # Change to previous day
+
+
+class ExampleStrategy(AbstractStrategy):
+    def initialize(self):
+        self.universe=['PEP', 'KO']
+        self.indicators={ 'MOMENTUM': momentum }
+
+    def handle_data(self, data, indicators=None):
+        pass
 ```
 
-Simply passing the `momentum` method as an indicator method will not work since it takes a series instead of data frame as an argument. `series_indicator` can be used to create a method that will call the indicator method with only the data from the specified column. In this example, the `momentum` method will be called with the data from the `Adj Close` column.
+Simply passing the `momentum` method as an indicator method will not work since it takes a series instead of data frame as an argument. The `with_series` decorator can be used to create a method that will call the indicator method with only the data from the specified column label (in this case `Adj Close`).
 
 The indicators can be used to define a simple strategy:
 
 ```python
-from pytrading.entities import AbstractStrategy, StrategyContext, Portfolio,\
-                               BacktestingEnvironment
-from pytrading.indicators import series_indicator
+from pytrading.entities import AbstractStrategy
+from pytrading.indicators import with_series
+
+
+@with_series('Adj Close')
+def momentum(series):
+    return series - series.shift()  # Change to previous day
 
 
 class MomentumStrategy(AbstractStrategy):
-    def before(self):
-        pass
+    def initialize(self):
+        self.universe=['PEP', 'KO']
+        self.skip_days=1  # Skip the first day
+        self.indicators={ 'MOMENTUM': momentum }
 
     def handle_data(self, data, indicators=None):
-        sec_weight = 1/len(self.context.universe)
+        sec_weight = 1 / len(self.universe)
 
-        for sec in self.context.universe:
+        for sec in self.universe:
             if indicators[sec]['MOMENTUM'][-1] > 0.0:
                 # Buy at next price, if security closed with an uptick
                 self.environment.order_target_percent(sec, sec_weight)
@@ -82,19 +89,8 @@ class MomentumStrategy(AbstractStrategy):
                 # Sell at next price, if security closed with a downtick
                 self.environment.order_target_percent(sec, 0.0)
 
-
-def momentum(series):
-    return series - series.shift()  # Change to previous day
-
-indicators = {
-    'MOMENTUM': series_indicator(momentum, 'Adj Close')
-}
-
-# (Current close - Previous close) cannot be calculated for day zero,
-# so we skip the first trading day.
-context = StrategyContext(['PEP'], skip_days=1, indicators=indicators)
-
-strategy = MomentumStrategy(context)
-environment = BacktestingEnvironment(strategy)
-environment.backtest()
+strategy = MomentumStrategy()
+strategy.run()
 ```
+
+We buy the stocks that performed well and sell those that did perform well during the last day. We additionally set the variable `skip_days` since we cannot calculate momentum data for the first day since that would require the closing price of the day before the first day.
