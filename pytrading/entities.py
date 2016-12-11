@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
-from . import dataprovider
+import logging
 from abc import ABC, abstractmethod
+from . import dataprovider
+from .utils import create_fail_method
+
+logger = logging.getLogger(__name__)
 
 
 class Portfolio(object):
@@ -8,14 +12,14 @@ class Portfolio(object):
         self.cash = cash
         self.positions = positions
 
-    def update(self, security, quantity, price):
+    def update(self, security, quantity, price, fail_method):
         if quantity * price > self.cash:
-            raise ValueError('Not enough cash to execute order. Security: {}, '
-                             'Quantity: {}, Price: {}, Portfolio Cash: {}'
-                             .format(security, quantity, price, self.cash))
+            fail_method('Not enough cash to execute order. Security: {}, '
+                        'Quantity: {}, Price: {}, Portfolio Cash: {}'
+                        .format(security, quantity, price, self.cash),
+                        ValueError)
         self.positions.setdefault(security, Position()).update(quantity, price)
         self.cash -= quantity * price
-        # print(security, ":", quantity, "@", price)
 
     def total_value(self, prices):
         value = 0.0
@@ -61,8 +65,8 @@ class AbstractStrategy(ABC):
         self.portfolio = Portfolio()
         self.environment = (environment or BacktestingEnvironment)
 
-    def run(self):
-        self.environment = self.environment(self)
+    def run(self, mode='graceful'):
+        self.environment = self.environment(self, mode)
         self.initialize()
         self.environment.backtest()
 
@@ -76,9 +80,10 @@ class AbstractStrategy(ABC):
 
 
 class BacktestingEnvironment(object):
-    def __init__(self, strategy):
+    def __init__(self, strategy, mode):
         self.strategy = strategy
         self.portfolio = strategy.portfolio
+        self.fail = create_fail_method(mode)
 
         self.data = {}
         self.indicator_data = {}
@@ -130,23 +135,23 @@ class BacktestingEnvironment(object):
             # Let the strategy handle the 'new' data
             self.strategy.handle_data(data=bt_data, indicators=bt_indicators)
 
-        print(self.portfolio)
-        print(self.portfolio.total_value(self._next_prices()))
+        logger.info(self.portfolio)
+        logger.info(self.portfolio.total_value(self._next_prices()))
 
     # Order the specified amount of the security @ the next day's opening price
     # and add it to the portfolio
     def order(self, security, quantity):
         price = self._next_price(security)
-        self.portfolio.update(security, quantity, price)
+        self.portfolio.update(security, quantity, price, self.fail)
 
     def order_target_percent(self, security, percent):
-        print('Ordering {} to {}%.'.format(security, percent*100))
+        logger.info('Ordering {} to {}%.'.format(security, percent*100))
         if percent < 0.0 or percent > 1.0:
-            raise ValueError('Percent must be between 0.0 and 1.0!')
+            self.fail('Percent must be between 0.0 and 1.0!', ValueError)
         price = self._next_price(security)
         pf_value = self.portfolio.total_value(self._next_prices())
 
         current_quantity = self.portfolio.position_quantity(security)
         quantity = int((pf_value * percent) / price) - current_quantity
         if quantity != 0:
-            self.portfolio.update(security, quantity, price)
+            self.portfolio.update(security, quantity, price, self.fail)
