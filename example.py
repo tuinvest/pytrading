@@ -25,5 +25,6 @@ class MomentumStrategy(AbstractStrategy):
                 # Sell at next price, if security closed with a downtick
                 self.environment.order_target_percent(sec, 0.0)
 
+
 strategy = MomentumStrategy()
 strategy.run()

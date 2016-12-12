@@ -18,6 +18,7 @@ class Portfolio(object):
                         'Quantity: {}, Price: {}, Portfolio Cash: {}'
                         .format(security, quantity, price, self.cash),
                         ValueError)
+            return
         self.positions.setdefault(security, Position()).update(quantity, price)
         self.cash -= quantity * price
 
@@ -148,6 +149,7 @@ class BacktestingEnvironment(object):
         logger.info('Ordering {} to {}%.'.format(security, percent*100))
         if percent < 0.0 or percent > 1.0:
             self.fail('Percent must be between 0.0 and 1.0!', ValueError)
+            return
         price = self._next_price(security)
         pf_value = self.portfolio.total_value(self._next_prices())
 
