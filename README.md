@@ -7,9 +7,11 @@ Python-library for algorithmic trading based on technical indicators with backte
 
 ## Installation
 
-Setup virtual environment and install dependencies:
+Clone repository, setup virtual environment, and install dependencies:
 
 ```shell
+git clone git@github.com:tuinvest/pytrading.git
+cd pytrading/
 python3 -m venv venv/
 source venv/bin/activate
 pip install -r requirements.txt
