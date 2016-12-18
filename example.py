@@ -1,18 +1,23 @@
 # -*- coding: utf-8 -*-
 from pytrading.entities import AbstractStrategy
-from pytrading.indicators import with_series
+from pytrading.indicators import AbstractIndicator, SMA
 
 
-@with_series('Adj Close')
-def momentum(series):
-    return series - series.shift()  # Change to previous day
+class MomentumIndicator(AbstractIndicator):
+    series_label = 'Adj Close'
+
+    def calc(self, series, msg):
+        print(msg)
+        return series - series.shift()  # Change to previous day
 
 
 class MomentumStrategy(AbstractStrategy):
     def initialize(self):
         self.universe=['PEP', 'KO']
         self.skip_days=1  # Automate this
-        self.indicators={ 'MOMENTUM': momentum }
+        # self.indicators={ 'MOMENTUM': MomentumIndicator(msg='Hello World.') }
+        self.indicators={ 'MOMENTUM': SMA() }
+
 
     def handle_data(self, data, indicators=None):
         sec_weight = 1 / len(self.universe)

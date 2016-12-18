@@ -93,9 +93,9 @@ class BacktestingEnvironment(object):
     def _load_data(self):
         for security in self.strategy.universe:
             self.data[security] = dataprovider.load(security)
-            for i_label, i_callable in self.strategy.indicators.items():
+            for i_label, i_class in self.strategy.indicators.items():
                 # indicator_data example: {'AAPL': {'ATR': ..., 'SMA_14': ...}}
-                i_data = i_callable(self.data[security])
+                i_data = i_class._run_calc(self.data[security])
                 self.indicator_data.setdefault(security, {})[i_label] = i_data
 
     def _next_price(self, security):
